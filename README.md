@@ -6,8 +6,8 @@ Simple express application
 
 ## Install system and application dependencies
 
-Install "node version >= 10", pm2 (npm install -g pm2)  on the system.
-Install all thrid party dependencies: npm install
+    Install "node version >= 10", pm2 (npm install -g pm2)  on the system.
+    Install all thrid party dependencies: npm install
 
 ## Run the application
 
