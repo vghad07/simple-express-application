@@ -1,0 +1,18 @@
+
+# WORKDIR specifies the application directory
+WORKDIR /app
+
+# Copying package.json file to the app directory
+COPY package.json /app
+
+# Installing npm pm2 for DOCKER
+RUN npm install pm2 -g
+
+# Copying current directory to app
+COPY . /app
+
+# Starting the application using pm2-runtime
+CMD ["pm2-runtime", "application_one.js"]
+
+# Expose port 3000
+EXPOSE 3000
