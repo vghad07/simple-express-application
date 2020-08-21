@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+
+  nodejsapp:
+    container_name: nodejsapp
+    build:
+      context: .
+      dockerfile: Dockerfile.yml
+    ports:
+      - "3000:3000"
+      - "4200:4200"
+  nginxfirstapp:
+    image: nginx
+    container_name: nginx_app1
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx1.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - nodejsapp
+  nginxsecondapp:
+    image: nginx
+    container_name: nginx_app2
+    restart: always
+    ports:
+      - "8888:80"
+    volumes:
+      - ./nginx2.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - nodejsapp
