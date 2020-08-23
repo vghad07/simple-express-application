@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-np-service
+spec:
+  type: NodePort
+  selector:
+    app: nodejsfirstapp
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+  labels:
+    app: nodejsfirstapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nodejsfirstapp
+  template:
+    metadata:
+      labels:
+        app: nodejsfirstapp
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - arm64
+      containers:
+      - name: nodejsfirstapp
+        image: 960848578028.dkr.ecr.us-west-1.amazonaws.com/nodejs-first-app
+		imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
