@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejsfirstapp-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: nodejsfirstapp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejssecondapp-service
+spec:
+  type: Nodeport
+  selector:
+    app: nodejssecondapp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 4200
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: firstapp-deployment
+  labels:
+    app: nodejsfirstapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nodejsfirstapp
+  template:
+    metadata:
+      labels:
+        app: nodejsfirstapp
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - arm64
+      containers:
+      - name: nodejsfirstapp
+        image: 960848578028.dkr.ecr.us-west-1.amazonaws.com/nodejs-first-app
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secondapp-deployment
+  labels:
+    app: nodejssecondapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nodejssecondapp
+  template:
+    metadata:
+      labels:
+        app: nodejssecondapp
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - arm64
+      containers:
+      - name: nodejssecondapp
+        image: 960848578028.dkr.ecr.us-west-1.amazonaws.com/nodejs-second-app
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4200
